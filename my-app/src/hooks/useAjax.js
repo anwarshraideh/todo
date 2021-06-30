@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { useState } from 'react';
 
 const useAjax = (url) => {
-  const [list, setList] = useState([]);
 
   const _RESTItems = async (method, url, item) => {
     const result = await axios({
@@ -16,30 +14,26 @@ const useAjax = (url) => {
     return result.data;
   };
 
-  const _postItem = (item) => {
-    _RESTItems('post', url, item);
+  const _postItem = async (item) => {
+    await _RESTItems('post', url, item);
   };
 
-  const _deleteItem = (item) => {
+  const _deleteItem = async (item) => {
     let extendedUrl = `${url}/${item._id}`;
-    _RESTItems('delete', extendedUrl, item);
+    await _RESTItems('delete', extendedUrl, item);
   };
 
-  const _putItem = (item) => {
+  const _putItem = async (item) => {
     item.complete = !item.complete;
     let extendedUrl = `${url}/${item._id}`;
-    _RESTItems('put', extendedUrl, item);
+    await _RESTItems('put', extendedUrl, item);
   };
 
-  const _getItems = () => {
-    const fetchData = async () => {
-      let data = await _RESTItems('get', url);
-      setList(data.results);
-    };
-    fetchData();
+  const _getItems = async () => {
+    return _RESTItems('get', url);
   };
 
-  return [list, _postItem, _deleteItem, _putItem, _getItems];
+  return [_postItem, _deleteItem, _putItem, _getItems];
 };
 
 export default useAjax;
